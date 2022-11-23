@@ -19,7 +19,7 @@ class Location
     private ?string $name = null;
 
     #[ORM\Column]
-    private ?int $zipCode = null;
+    private ?string $zipCode = null;
 
     #[ORM\OneToMany(mappedBy: 'location', targetEntity: Ad::class, orphanRemoval: true)]
     private Collection $ads;
@@ -46,12 +46,12 @@ class Location
         return $this;
     }
 
-    public function getZipCode(): ?int
+    public function getZipCode(): ?string
     {
         return $this->zipCode;
     }
 
-    public function setZipCode(int $zipCode): self
+    public function setZipCode(string $zipCode): self
     {
         $this->zipCode = $zipCode;
 
