@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Ad;
 use App\Entity\Image;
 use App\Entity\Location;
+use App\Entity\Transaction;
 use App\Entity\Type;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -47,6 +48,14 @@ class AppFixtures extends Fixture
             "Industrie",
             "Terrain"
         ];
+
+        $transactionsArray = [
+            "Vente",
+            "Location"
+        ];
+
+        $transactionsObjects = [];
+
         $typesObjects = [];
 
         $locations = [];
@@ -54,8 +63,19 @@ class AppFixtures extends Fixture
         $faker = Factory::create("fr_FR");
 
         $admin = new User();
+        $admin->setLastname('Biaccalli')
+            ->setFirstname('Nando')
+            ->setEmail('nandobiaccalli@gmail.com')
+            ->setPassword($this->hasher->hashPassword($admin, 'password'));
 
-        for ($l = 0; $l < 10; $l ++) {
+        foreach ($transactionsArray as $t) {
+            $trans = new Transaction();
+            $trans->setName($t);
+            $manager->persist($trans);
+            $transactionsObjects[] = $trans;
+        }
+
+        for ($l = 0; $l < 10; $l++) {
             $location = new Location();
             $location->setName($faker->city())
                 ->setZipCode($faker->postcode());
@@ -65,11 +85,10 @@ class AppFixtures extends Fixture
             $locations[] = $location;
         }
 
-        foreach($types as $t) {
+        foreach ($types as $t) {
             $type = new Type();
             $type->setName($t);
             $manager->persist($type);
-
             $typesObjects[] = $type;
         }
 
@@ -77,7 +96,6 @@ class AppFixtures extends Fixture
             ->setFirstname('Nando')
             ->setLastname('Biaccalli')
             ->setPassword($this->hasher->hashPassword($admin, 'password'));
-
         $manager->persist($admin);
 
         for ($u = 0; $u < 10; $u++) {
@@ -102,15 +120,14 @@ class AppFixtures extends Fixture
                     ->setUser($user)
                     ->setType($faker->randomElement($typesObjects))
                     ->setLocation($faker->randomElement($locations))
+                    ->setTransaction($faker->randomElement($transactionsObjects))
                 ;
-
                 $manager->persist($ad);
 
                 for ($i = 0; $i < rand(1, 6); $i++) {
                     $image = new Image();
                     $image->setAd($ad)
-                        ->setPath("https://picsum.photos/id/".rand(1,100)."/800/800");
-
+                        ->setPath("https://picsum.photos/id/" . rand(1, 100) . "/800/800");
                     $manager->persist($image);
                 }
             }
